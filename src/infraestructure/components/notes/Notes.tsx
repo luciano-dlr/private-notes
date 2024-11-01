@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -7,7 +7,13 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { Square } from "lucide-react";
+import {
+  Dot,
+  GripHorizontal,
+  GripVerticalIcon,
+  LayoutListIcon,
+  Square,
+} from "lucide-react";
 import "./Styles.css";
 import { useNotesStore } from "@/infraestructure/zustand/NotesStore";
 
@@ -19,6 +25,8 @@ interface NoteProps {
 export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
   const { notes, updateNote } = useNotesStore();
   const note = notes.find((n) => n.id === id);
+  const noteRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   if (!note) return null;
 
@@ -50,13 +58,38 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
     updateNote(id, title, content, newBackgroundColor);
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+      setIsMobile(isMobile);
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener for resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Determinar las clases según el tamaño de la pantalla
+  const cardClass = !isMobile ? "drag-handle" : ""; // Clase para la tarjeta completa
+
   return (
     <Card
-      className={`drag-handle h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${backgroundColor} ${
+      ref={noteRef}
+      className={`h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${cardClass} ${backgroundColor} ${
         isOverDeleteZone ? "bg-red-500" : ""
       }`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
+          <div className="drag-handle">-</div>
+        )}
         <h2
           contentEditable
           suppressContentEditableWarning
@@ -69,7 +102,11 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
         >
           {title}
         </h2>
-        <div className="drag-handle bg-black w-20">. . .</div>
+        {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
+          <div className="drag-handle w-[100%] ">
+            <GripVerticalIcon width={15} />
+          </div>
+        )}
         <div>
           <Select onValueChange={handleBackgroundColorChange}>
             <SelectTrigger className="border-0 shadow-none focus:ring-0">
