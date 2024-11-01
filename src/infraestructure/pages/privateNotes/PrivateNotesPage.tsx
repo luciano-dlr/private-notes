@@ -198,6 +198,7 @@ const PrivateNotesPage = () => {
             onDragStart={onDragStart}
             onDrag={onDrag}
             onDragStop={onDragStop}
+            isDraggable={false}
           >
             {notes.map((note) => (
               <div
