@@ -52,7 +52,7 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
 
   return (
     <Card
-      className={`h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${backgroundColor} ${
+      className={`drag-handle h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${backgroundColor} ${
         isOverDeleteZone ? "bg-red-500" : ""
       }`}
     >
@@ -69,6 +69,7 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
         >
           {title}
         </h2>
+        <div className="drag-handle bg-black w-20">. . .</div>
         <div>
           <Select onValueChange={handleBackgroundColorChange}>
             <SelectTrigger className="border-0 shadow-none focus:ring-0">
