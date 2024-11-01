@@ -7,7 +7,7 @@ export const PublicRoutes: FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/private-notes" element={<PrivateNotesPage />} />
-        <Route path="*" element={<Navigate to={"/private-notes"} />} />
+        <Route path="/*" element={<Navigate to={"/private-notes"} />} />
       </Routes>
     </BrowserRouter>
   );

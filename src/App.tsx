@@ -1,8 +1,8 @@
 import "./App.css";
-import { PublicRoutes } from "./infraestructure/router/public/Public";
+import PrivateNotesPage from "./infraestructure/pages/privateNotes/PrivateNotesPage";
 
 export const App = () => {
-  return <PublicRoutes />;
+  return <PrivateNotesPage />;
 };
 
 export default App;

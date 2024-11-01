@@ -24,6 +24,7 @@ const PrivateNotesPage = () => {
   const deleteZoneRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDraggable, setIsDraggable] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -51,7 +52,14 @@ const PrivateNotesPage = () => {
 
   const onDragStart = useCallback(
     (_layout: Layout[], _oldItem: Layout, newItem: Layout) => {
-      setDraggingNoteId(newItem.i);
+      setIsDraggable(false);
+
+      // Re-enable dragging after a short delay
+      setTimeout(() => {
+        setIsDraggable(true);
+        setDraggingNoteId(newItem.i);
+      }, 100); // Adjust delay time as needed (e.g., 300ms)
+      console.log(isDraggable);
     },
     []
   );
@@ -198,13 +206,14 @@ const PrivateNotesPage = () => {
             onDragStart={onDragStart}
             onDrag={onDrag}
             onDragStop={onDragStop}
-            isDraggable={false}
+            isDraggable={isDraggable}
           >
             {notes.map((note) => (
               <div
                 key={note.id}
                 className={draggingNoteId === note.id ? "dragging" : ""}
                 style={{ backgroundColor: "transparent" }}
+                // onMouseDown={handleMouseDown(note.id)}
               >
                 <Note
                   id={note.id}
