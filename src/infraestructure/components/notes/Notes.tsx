@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { GripVerticalIcon, Square } from "lucide-react";
+import { GripHorizontal, Square } from "lucide-react";
 import "./Styles.css";
 import { useNotesStore } from "@/infraestructure/zustand/NotesStore";
 
@@ -39,6 +39,21 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
       updateNote(id, title, e.target.value, backgroundColor);
     },
     [id, title, backgroundColor, updateNote]
+  );
+
+  // Nueva función para manejar el evento de tecla presionada
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Prevenir el comportamiento por defecto
+        if (content.trim()) {
+          // Agregar un nuevo elemento de lista al contenido
+          const newContent = content.trim() + "\n• "; // Agregar un punto
+          updateNote(id, title, newContent, backgroundColor);
+        }
+      }
+    },
+    [content, id, title, backgroundColor, updateNote]
   );
 
   const handleBackgroundColorChange = (value: string) => {
@@ -82,13 +97,13 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
-          <div className="drag-handle">-</div>
+          <div className="drag-handle w-[10%]">-</div>
         )}
         <h2
           contentEditable
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className="text-sm font-medium outline-none cursor-text focus:ring-0 hover:bg-gray-100 "
+          className="text-sm font-medium outline-none cursor-text focus:ring-0 w-[50%] hover:bg-gray-100 "
           style={{
             padding: "2px",
             borderRadius: "4px",
@@ -97,8 +112,8 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
           {title}
         </h2>
         {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
-          <div className="drag-handle w-[100%] ">
-            <GripVerticalIcon width={15} />
+          <div className="drag-handle w-[40%]">
+            <GripHorizontal width={15} />
           </div>
         )}
         <div>
@@ -124,6 +139,7 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
           placeholder="Type your note here..."
           value={content}
           onChange={handleContentChange}
+          onKeyDown={handleKeyDown} // Agregar el nuevo manejador aquí
           style={{
             background: "transparent",
             border: "none",
