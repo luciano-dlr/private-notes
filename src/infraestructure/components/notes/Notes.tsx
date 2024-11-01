@@ -7,13 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import {
-  Dot,
-  GripHorizontal,
-  GripVerticalIcon,
-  LayoutListIcon,
-  Square,
-} from "lucide-react";
+import { GripVerticalIcon, Square } from "lucide-react";
 import "./Styles.css";
 import { useNotesStore } from "@/infraestructure/zustand/NotesStore";
 
