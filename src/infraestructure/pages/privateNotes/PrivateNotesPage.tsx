@@ -24,7 +24,26 @@ const PrivateNotesPage = () => {
   const deleteZoneRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDraggable, setIsDraggable] = useState(true);
+
+  const [isDraggingEnabled, setIsDraggingEnabled] = useState(false);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  console.log(isDraggingEnabled);
+
+  const handleTouchStart = useCallback(() => {
+    // Inicia un temporizador de pulsación larga para activar el arrastre
+    longPressTimerRef.current = setTimeout(() => {
+      setIsDraggingEnabled(true); // Activa el arrastre después de una pulsación prolongada
+    }, 100); // Ajusta el tiempo en milisegundos según prefieras
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    // Limpia el temporizador y desactiva el arrastre al finalizar la pulsación
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+    }
+    setIsDraggingEnabled(false); // Desactiva el arrastre cuando se levanta el dedo
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,18 +69,18 @@ const PrivateNotesPage = () => {
     [setLayouts]
   );
 
+  // const onDragStart = useCallback(
+  //   (_layout: Layout[], _oldItem: Layout, newItem: Layout) => {
+  //     setDraggingNoteId(newItem.i);
+  //   },
+  //   []
+  // );
   const onDragStart = useCallback(
     (_layout: Layout[], _oldItem: Layout, newItem: Layout) => {
-      setIsDraggable(false);
-
-      // Re-enable dragging after a short delay
-      setTimeout(() => {
-        setIsDraggable(true);
-        setDraggingNoteId(newItem.i);
-      }, 100); // Adjust delay time as needed (e.g., 300ms)
-      console.log(isDraggable);
+      if (!isDraggingEnabled) return; // Evita el arrastre si no se cumple la pulsación larga
+      setDraggingNoteId(newItem.i);
     },
-    []
+    [isDraggingEnabled]
   );
 
   const onDrag = useCallback(
@@ -206,12 +225,18 @@ const PrivateNotesPage = () => {
             onDragStart={onDragStart}
             onDrag={onDrag}
             onDragStop={onDragStop}
-            isDraggable={isDraggable}
+            isDraggable={true}
           >
             {notes.map((note) => (
               <div
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleTouchStart}
+                onMouseUp={handleTouchEnd}
                 key={note.id}
-                className={draggingNoteId === note.id ? "dragging" : ""}
+                className={`z-50 ${
+                  draggingNoteId === note.id ? "dragging" : ""
+                }`}
                 style={{ backgroundColor: "transparent" }}
                 // onMouseDown={handleMouseDown(note.id)}
               >

@@ -52,7 +52,7 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
 
   return (
     <Card
-      className={`h-full flex flex-col transition-colors duration-200 rounded-sm ${backgroundColor} ${
+      className={`h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${backgroundColor} ${
         isOverDeleteZone ? "bg-red-500" : ""
       }`}
     >
