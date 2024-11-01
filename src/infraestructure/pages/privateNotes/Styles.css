@@ -1,0 +1,19 @@
+.react-grid-layout .react-grid-item {
+  background-color: gray !important;
+  border-radius: 4px;
+}
+
+.react-grid-layout .react-grid-item.dragging,
+.react-grid-layout .react-grid-item.react-draggable-dragging {
+  background-color: transparent !important;
+}
+
+.noClickPapa {
+  pointer-events: none;
+}
+
+.trash-icon-container {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}

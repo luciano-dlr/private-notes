@@ -1,0 +1,4 @@
+/* Oculta el icono del select */
+.custom-select-trigger {
+  display: none;
+}
