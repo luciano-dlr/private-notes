@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -6,56 +6,48 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Square } from "lucide-react";
 import "./Styles.css";
+import { useNotesStore } from "@/infraestructure/zustand/NotesStore";
 
 interface NoteProps {
   id: string;
-  title: string;
-  content: string;
-  onUpdate: (id: string, title: string, content: string) => void;
   isOverDeleteZone: boolean;
 }
 
-export const Note = ({
-  id,
-  title,
-  content,
-  onUpdate,
-  isOverDeleteZone,
-}: NoteProps) => {
-  const [noteTitle, setNoteTitle] = useState(title);
-  const [noteContent, setNoteContent] = useState(content);
-  const [backgroundColor, setBackgroundColor] = useState("bg-white"); // Estado para el color de fondo
+export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
+  const { notes, updateNote } = useNotesStore();
+  const note = notes.find((n) => n.id === id);
+
+  if (!note) return null;
+
+  const { title, content, backgroundColor } = note;
 
   const handleTitleChange = useCallback(
     (e: React.FocusEvent<HTMLHeadingElement>) => {
       const newTitle = e.target.textContent || "";
-      setNoteTitle(newTitle);
-      onUpdate(id, newTitle, noteContent);
+      updateNote(id, newTitle, content, backgroundColor);
     },
-    [id, noteContent, onUpdate]
+    [id, content, backgroundColor, updateNote]
   );
 
   const handleContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setNoteContent(e.target.value);
-      onUpdate(id, noteTitle, e.target.value);
+      updateNote(id, title, e.target.value, backgroundColor);
     },
-    [id, noteTitle, onUpdate]
+    [id, title, backgroundColor, updateNote]
   );
 
   const handleBackgroundColorChange = (value: string) => {
-    // Mapeo de valores a clases de color
     const colorMap: { [key: string]: string } = {
       green: "bg-green-300",
       yellow: "bg-yellow-300",
       blue: "bg-blue-300",
       violet: "bg-violet-300",
     };
-    setBackgroundColor(colorMap[value] || "bg-white");
+    const newBackgroundColor = colorMap[value] || "bg-white";
+    updateNote(id, title, content, newBackgroundColor);
   };
 
   return (
@@ -75,7 +67,7 @@ export const Note = ({
             borderRadius: "4px",
           }}
         >
-          {noteTitle}
+          {title}
         </h2>
         <div>
           <Select onValueChange={handleBackgroundColorChange}>
@@ -98,7 +90,7 @@ export const Note = ({
         <Textarea
           className="w-full h-full resize-none outline-none focus:ring-0 focus:border-blue-500"
           placeholder="Type your note here..."
-          value={noteContent}
+          value={content}
           onChange={handleContentChange}
           style={{
             background: "transparent",
