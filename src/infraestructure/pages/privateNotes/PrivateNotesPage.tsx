@@ -42,7 +42,7 @@ const PrivateNotesPage = () => {
   }, []);
 
   const onLayoutChange = useCallback(
-    (currentLayout: Layout[], allLayouts: { [key: string]: Layout[] }) => {
+    (_currentLayout: Layout[], allLayouts: { [key: string]: Layout[] }) => {
       setLayouts(allLayouts);
     },
 
