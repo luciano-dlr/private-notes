@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { GripHorizontal, Square } from "lucide-react";
+import { GripHorizontal, GripVertical, Square } from "lucide-react";
 import "./Styles.css";
 import { useNotesStore } from "@/infraestructure/zustand/NotesStore";
 
@@ -91,31 +91,38 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
   return (
     <Card
       ref={noteRef}
-      className={`h-full flex flex-col transition-colors duration-200 rounded-sm z-50 ${cardClass} ${backgroundColor} ${
+      className={`h-full flex flex-col transition-colors duration-200 rounded-sm z-50 drag-handle ${backgroundColor} ${
         isOverDeleteZone ? "bg-red-500" : ""
       }`}
+      style={{
+        padding: isMobile ? "0px" : "10px", // Elimina el padding en móvil
+        margin: isMobile ? "0px" : "auto", // Elimina el margen en móvil
+      }}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader
+        className={`flex flex-row items-center justify-between space-y-0 ${
+          isMobile ? "pb-0 justify-start" : "pb-2"
+        }`}
+      >
         {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
-          <div className="drag-handle w-[10%]">-</div>
+          <div className="drag-handle w-full flex ">
+            <GripVertical width={15} />
+          </div>
         )}
         <h2
           contentEditable
           suppressContentEditableWarning
           onBlur={handleTitleChange}
-          className="text-sm font-medium outline-none cursor-text focus:ring-0 w-[50%] hover:bg-gray-100 "
+          className={`text-sm font-medium outline-none cursor-text flex items-center focus:ring-0 ${
+            isMobile ? "w-[50%]" : "w-[70%]"
+          } hover:bg-gray-100`}
           style={{
-            padding: "2px",
+            padding: isMobile ? "0px" : "2px", // Elimina el padding en móvil
             borderRadius: "4px",
           }}
         >
           {title}
         </h2>
-        {isMobile && ( // Solo mostrar el div pequeño en dispositivos móviles
-          <div className="drag-handle w-[40%]">
-            <GripHorizontal width={15} />
-          </div>
-        )}
         <div>
           <Select onValueChange={handleBackgroundColorChange}>
             <SelectTrigger className="border-0 shadow-none focus:ring-0">
@@ -139,11 +146,11 @@ export const Note = ({ id, isOverDeleteZone }: NoteProps) => {
           placeholder="Type your note here..."
           value={content}
           onChange={handleContentChange}
-          onKeyDown={handleKeyDown} // Agregar el nuevo manejador aquí
+          onKeyDown={handleKeyDown}
           style={{
             background: "transparent",
             border: "none",
-            padding: "2px",
+            padding: isMobile ? "0px" : "2px", // Elimina el padding en móvil
           }}
         />
       </CardContent>
